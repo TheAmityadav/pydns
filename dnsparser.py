@@ -1,15 +1,11 @@
 import struct
+from models import DnsHeader
+
 
 class DnsParser:
 
     def __init__(self,packet):
         self.packet = packet
-        self.tid = None
-        self.flags = None
-        self.questions = None
-        self.answer_rr = None
-        self.authority_rr = None
-        self.additional_rr = None
         self.flags_dict = {}
         self.domain = None
 
@@ -20,12 +16,12 @@ class DnsParser:
 
 
     def unpack_header(self):
-        self.tid,self.flags,self.questions,self.answer_rr,\
-        self.authority_rr,self.additional_rr = struct.unpack("!6H",self.packet[:12])
+        header = struct.unpack("!6H",self.packet[:12])
+        self.header = DnsHeader(*header)
 
 
     def unpack_flags(self):
-        bin_flags = format(self.flags,"016b")
+        bin_flags = format(self.header.flags,"016b")
         print(f"flags in binary is {bin_flags}")
     
         self.flags_dict["QR"] = bin_flags[0]
@@ -57,3 +53,6 @@ class DnsParser:
     
     def get_flags_dict(self):
         return self.flags_dict
+    
+    def get_headers(self):
+        return self.header

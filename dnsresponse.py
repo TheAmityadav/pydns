@@ -1,5 +1,4 @@
-import subprocess
-
+import socket
 
 class DnsResponse:
 
@@ -8,16 +7,17 @@ class DnsResponse:
         self.domain = domain
         self.upstream_dns = upstream_dns
 
-    def query_from_upstream(self):
-        cmd = f"dig {self.domain} @{self.upstream_dns}"
-        status, output = subprocess.getstatusoutput(cmd)
-        print(f"query_from_upstream--1--status {status}\n\
-              Output is {output}")
-        if status and status == 0:
-            return output
 
+    def query_from_upstream(self,packet):
+        PORT = 53
 
-    
+        s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+        s.settimeout(2)
+        s.sendto(packet,(self.upstream_dns,PORT))
+
+        res,_ = s.recvfrom(512)
+        print(f"res we got from upstream is \n {res}")
+        return res
 
 
 
