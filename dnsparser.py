@@ -56,3 +56,6 @@ class DnsParser:
     
     def get_headers(self):
         return self.header
+    
+    def get_raw_packets(self):
+        return self.packet

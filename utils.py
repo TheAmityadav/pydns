@@ -14,3 +14,5 @@ def query_from_upstream(packet):
     print(f"res we got from upstream is \n {res}")
     return res
 
+def get_bytes(str):
+    return int(str,2).to_bytes(2,byteorder="big")
