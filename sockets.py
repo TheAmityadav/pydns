@@ -21,6 +21,7 @@ while 1:
     print(f"Heders in thr Request are {headers}")
 
     reponse_obj = DnsResponse(parser)
+    rsp_pkt = reponse_obj.get_response()
 
     tid_bytes = headers.tid
     print(f"tid in binary is {format(tid_bytes,"016b")}")
@@ -28,7 +29,7 @@ while 1:
 
     rep_data = tid_bytes.to_bytes(2,"big")
     print(f"rep data is {rep_data}")
-    sock.sendto(rep_data,address)
+    sock.sendto(rsp_pkt,address)
 
     print(f"Flags dicst is {parser.flags_dict}")
 

@@ -10,15 +10,25 @@ class DnsResponse():
 
     def __init__(self,parser):
         self.req_header = parser.header
-
+        self.parser = parser
         self.res_header = None
         self.res_question = None
-
-        self.final_response = None
+        self.res_answer = None
 
 
         self.set_header()
         self.set_quesion()
+        self.set_answer()
+        print(f"res answer is {self.res_answer}")
+        
+        self.final_response = self.res_header + self.res_question + self.res_answer
+
+        print(f"final reposne is made_---{self.final_response}")
+
+
+    def get_response(self):
+            return self.final_response
+
 
     ####HEADER SECTION ##################
 
@@ -51,14 +61,16 @@ class DnsResponse():
 
         QR = "1"
         OP_CODE = "0000"
+        AA = "0"
         TC = "0"
         RD = "1"
         RA = "1"
         Z = "000"
-        RCODE = "0"
+        RCODE = "0000"
 
         flags += QR
         flags += OP_CODE
+        flags += AA
         flags += TC
         flags += RD
         flags += RA
@@ -91,4 +103,17 @@ class DnsResponse():
 ###################DNS Questions   #################
 
     def set_quesion(self):
-        packet = parser.get_raw_packets()
+        packet = self.parser.get_raw_packets()
+        self.res_question = packet[12:28]
+        print(f"packet 12th valus is {packet[12]}")
+
+
+    def set_answer(self):
+        name = 0xc00c
+        type = 0x0001
+        dns_class = 0x0011
+        ttl = 0x0000003c
+        rdlength = 0x0004
+        rdata = 0x99999999
+
+        self.res_answer = struct.pack("!HHHIHI",name,type,dns_class,ttl,rdlength,rdata)
